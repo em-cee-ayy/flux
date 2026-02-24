@@ -25,43 +25,47 @@ export function BrainDump({ onNext, defaultValue = "" }: BrainDumpProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="min-h-screen flex flex-col px-6 py-8 md:px-8"
-      style={{ backgroundColor: "#FAF8F5" }}
+      className="min-h-screen flex flex-col px-5 py-6 sm:px-8 sm:py-10 overflow-y-auto"
+      style={{ backgroundColor: "#FBF7F2" }}
     >
-      <div className="text-center mb-8">
-        <p className="text-xs tracking-widest text-[#A0A0B0] mb-6">flux app</p>
-        <h1 className="text-[32px] font-bold tracking-wide text-[#1A1D2E] mb-2">
-          brain dump your tasks
-        </h1>
-        <p className="text-[13px] text-[#A0A0B0]">
-          everything on your mind. no order needed.
-        </p>
-      </div>
+      <div className="w-full max-w-[560px] mx-auto flex-1 flex flex-col">
+        <div className="text-center mb-7 sm:mb-10">
+          <p className="text-xs tracking-[0.25em] text-[#B0A8A3] mb-5">
+            flux app
+          </p>
+          <h1 className="text-[28px] sm:text-[34px] font-bold tracking-wide text-[#1A1D2E] mb-2">
+            brain dump your tasks
+          </h1>
+          <p className="text-[13px] text-[#9A9390]">
+            everything on your mind. no order needed.
+          </p>
+        </div>
 
-      <div className="flex-1 mb-6">
-        <textarea
-          value={tasks}
-          onChange={(e) => setTasks(e.target.value)}
-          placeholder={`• reply to mom's text\n• finish that report\n• walk the dog\n• grocery shopping\n• water plants\n• whatever's floating around up there`}
-          className="w-full h-48 p-6 rounded-3xl border-2 border-transparent bg-white/80 text-base text-[#1A1D2E] placeholder:text-[#A0A0B0] resize-none focus:border-[#C7C0FF] focus:outline-none transition-all shadow-sm"
-        />
-      </div>
+        <div className="flex-1 mb-6">
+          <textarea
+            value={tasks}
+            onChange={(e) => setTasks(e.target.value)}
+            placeholder={`• reply to mom's text\n• finish that report\n• walk the dog\n• grocery shopping\n• water plants\n• whatever's floating around up there`}
+            className="w-full h-44 sm:h-56 p-5 sm:p-6 rounded-[28px] border border-white/80 bg-white/90 text-[15px] sm:text-base text-[#1A1D2E] placeholder:text-[#B0A8A3] resize-none focus:border-[#E8D8FF] focus:ring-4 focus:ring-[#E8D8FF]/30 focus:outline-none transition-all shadow-[0_12px_30px_-18px_rgba(70,40,120,0.45)]"
+          />
+        </div>
 
-      <div className="mb-6 rounded-3xl overflow-hidden h-48 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center">
-        <ImageWithFallback
-          src="/illustrations/brain-dump-illustration.png"
-          alt="brain dump illustration"
-          className="w-full h-full object-cover"
-        />
-      </div>
+        <div className="mb-6 rounded-[28px] overflow-hidden h-44 sm:h-52 bg-gradient-to-br from-rose-100 via-orange-100 to-amber-100 flex items-center justify-center shadow-[0_18px_40px_-26px_rgba(235,120,90,0.6)]">
+          <ImageWithFallback
+            src="/illustrations/brain-dump-illustration.png"
+            alt="brain dump illustration"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-      <button
-        onClick={handleNext}
-        disabled={!tasks.trim()}
-        className="w-full py-4 rounded-full bg-[#F8A07D] text-white font-medium text-base tracking-wide transition-all hover:bg-[#F28F67] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
-      >
-        next: vibe check
-      </button>
+        <button
+          onClick={handleNext}
+          disabled={!tasks.trim()}
+          className="w-full py-4 rounded-full bg-gradient-to-r from-[#FFB38A] via-[#F8A07D] to-[#F38D74] text-white font-semibold text-base tracking-wide transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_18px_35px_-20px_rgba(240,135,110,0.8)]"
+        >
+          next: vibe check
+        </button>
+      </div>
     </motion.div>
   );
 }

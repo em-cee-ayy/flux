@@ -72,9 +72,17 @@ export default function App() {
     setIsAnalyzing(false);
   };
 
+  const handleSave = () => {
+    // Placeholder for future persistence behavior.
+  };
+
+  const handleShare = () => {
+    // Placeholder for future share behavior.
+  };
+
   return (
     <div
-      className="min-h-screen w-full overflow-hidden"
+      className="min-h-screen w-full overflow-x-hidden"
       style={{ maxWidth: "800px", margin: "0 auto" }}
     >
       <AnimatePresence mode="wait">
@@ -126,8 +134,8 @@ export default function App() {
           <JournalEntry
             key="journalEntry"
             task={selectedTask}
-            onSave={handleSaveOrShare}
-            onShare={handleSaveOrShare}
+            onSave={handleSave}
+            onShare={handleShare}
             onBack={handleSaveOrShare}
           />
         )}

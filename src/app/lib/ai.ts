@@ -50,19 +50,72 @@ function parseTasks(brainDump: string): string[] {
     .filter(Boolean);
 }
 
-function microStepsFor(taskName: string): string[] {
+function microStepsFor(taskName: string, energy: EnergyLevel): string[] {
   const lower = taskName.toLowerCase();
+  const timer =
+    energy === 'low' ? 'set a 5-minute timer' : energy === 'high' ? 'set a 20-minute timer' : 'set a 12-minute timer';
+
   // A few task-specific templates; otherwise default gentle steps.
-  if (lower.includes('email') || lower.includes('reply') || lower.includes('text')) {
-    return ['open the message', 'write a 1-sentence reply', 'hit send (that’s it)'];
+  if (lower.includes('email') || lower.includes('reply') || lower.includes('text') || lower.includes('dm')) {
+    return [
+      'open the message thread',
+      'write a 1-sentence reply (keep it simple)',
+      'add any key detail or question',
+      'read once for clarity',
+      'hit send',
+    ];
+  }
+  if (lower.includes('call') || lower.includes('phone')) {
+    return [
+      'open the contact and draft a short note of what you need',
+      'pick a 10-minute window to call',
+      'dial and say the first line',
+      'ask the key question or make the request',
+      'note next steps and end the call',
+    ];
   }
   if (lower.includes('laundry')) {
-    return ['grab clothes + detergent', 'start the wash', 'set a timer'];
+    return ['gather clothes and supplies', 'start the wash', timer, 'move to dryer or hang', 'fold just one small pile'];
   }
-  if (lower.includes('vscode') || lower.includes('code') || lower.includes('npm')) {
-    return ['open vscode', 'run the dev server', 'make one tiny change'];
+  if (lower.includes('clean') || lower.includes('tidy')) {
+    return ['pick one small zone (desk/counter)', 'remove trash', 'wipe surfaces', timer, 'reset the zone and stop'];
   }
-  return ['take one deep breath', `start the first tiny step of: ${taskName}`, 'stop when you reach “done enough”'];
+  if (lower.includes('grocery') || lower.includes('errand') || lower.includes('shopping')) {
+    return [
+      'write a 5-item list',
+      'group by aisle or store section',
+      'grab essentials first',
+      'check out',
+      'unpack and put away one category',
+    ];
+  }
+  if (lower.includes('study') || lower.includes('read') || lower.includes('research')) {
+    return ['open the doc or chapter', 'write 3 focus questions', timer, 'capture 3 key points', 'stop and summarize'];
+  }
+  if (lower.includes('write') || lower.includes('draft') || lower.includes('outline')) {
+    return ['open a blank doc', 'write a messy 3-bullet outline', timer, 'turn one bullet into 3 sentences', 'save'];
+  }
+  if (lower.includes('plan') || lower.includes('organize') || lower.includes('schedule')) {
+    return ['brain-dump 5 bullets', 'circle the top 1', 'define the next physical action', timer, 'pick a time to do it'];
+  }
+  if (lower.includes('vscode') || lower.includes('code') || lower.includes('npm') || lower.includes('bug')) {
+    return [
+      'open the project',
+      'run the dev server',
+      'find the exact file or component',
+      timer,
+      'make the smallest change and refresh',
+      'note what changed',
+    ];
+  }
+
+  return [
+    'take one deep breath',
+    'define what "done enough" looks like',
+    'start the first tiny action',
+    timer,
+    'wrap up and mark it done',
+  ];
 }
 
 function buildMockResponse(tasksText: string, vibeText: string): AiResponse {
@@ -79,18 +132,18 @@ function buildMockResponse(tasksText: string, vibeText: string): AiResponse {
 
   const description =
     energy_level === 'low'
-      ? "your brain’s low on fuel. we’re going gentle today."
+      ? "your system feels a bit low on fuel. we’ll keep it gentle and clear."
       : energy_level === 'high'
-        ? "you’ve got momentum—let’s use it on something that matters."
-        : "you’ve got enough capacity for a solid step forward.";
+        ? "you’ve got momentum—let’s channel it into a meaningful win."
+        : "you’ve got enough capacity for a solid, steady step forward.";
 
   const starters = tasks.slice(0, Math.max(1, Math.ceil(tasks.length * 0.6))).map((t) => ({
     name: t,
     minutes: 5,
     difficulty: 'easy' as const,
-    steps: microStepsFor(t),
-    why_now: 'low friction + clear finish = instant momentum.',
-    brain_benefit: 'reduces decision load and builds safety through completion.',
+    steps: microStepsFor(t, energy_level),
+    why_now: 'quick wins lower friction and build momentum.',
+    brain_benefit: 'reduces decision load and makes progress feel safe.',
   }));
 
   const mains = energy_level === 'low'
@@ -99,9 +152,13 @@ function buildMockResponse(tasksText: string, vibeText: string): AiResponse {
         name: t,
         minutes: energy_level === 'high' ? 20 : 15,
         difficulty: energy_level === 'high' ? ('challenging' as const) : ('moderate' as const),
-        steps: [...microStepsFor(t), 'do a 10-minute sprint', 'stop and celebrate'],
-        why_now: 'you have enough bandwidth for a structured chunk of progress.',
-        brain_benefit: 'channels focus and converts motivation into results.',
+        steps: [
+          ...microStepsFor(t, energy_level),
+          energy_level === 'high' ? 'do a focused 20-minute sprint' : 'do a focused 12-minute sprint',
+          'stop, save your place, and celebrate',
+        ],
+        why_now: 'your energy can support a focused chunk of progress.',
+        brain_benefit: 'channels focus and turns effort into visible results.',
       }));
 
   return {
@@ -117,9 +174,10 @@ function buildMockResponse(tasksText: string, vibeText: string): AiResponse {
       mains,
     },
     ai_reasoning: {
-      what_i_noticed: 'i’m using your words + overall tone to estimate your current capacity.',
-      matching_strategy: 'i prioritize low-friction wins first, then offer deeper tasks only if your energy supports it.',
-      encouragement: 'you don’t need perfect energy—just one tiny step counts.',
+      what_i_noticed: 'i’m using your words and tone to estimate your current capacity and nervous-system needs.',
+      matching_strategy:
+        'i start with low-friction wins to build safety, then offer deeper tasks only if your energy supports them.',
+      encouragement: 'you don’t need perfect energy—consistent tiny steps are enough.',
     },
   };
 }
